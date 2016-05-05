@@ -16,11 +16,11 @@
 \useoutertheme{essential}
 \setbeamertemplate{navigation symbols}{}
 
-\author{Michele Scandale}
+\author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{04-04-2012}
+\date{06-05-2016}
 \title{LLVM Passes}
-\newcommand{\customdata}{Michele Scandale <scandale@elet.polimi.it>}
+\newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
 \lstset{basicstyle=\ttfamily\scriptsize}
 \newcommand{\cinput}[1]{\lstinputlisting[language=C]{#1}}
@@ -62,157 +62,63 @@
 \begin{frame}
 \maketitle
 \begin{center}
-\itshape\scriptsize This material is strongly based on Ettore Speziale's material for the previous year course.
+\itshape\scriptsize This material is strongly based on material produced by
+                    Michele Scandale and Ettore Speziale for the course
+                    `Code Optimizations and Transformations`.
 \end{center}
 \end{frame}
 
-\section{Introduction}
-\begin{frame}{What is Available Inside LLVM?}
-LLVM provides passes performing basic transformations:
-
-\begin{itemize}
-\item variables promotion
-\item loops canonicalization
-\item \ldots
-\end{itemize}
-
-They can be used to \alert{normalize/canonicalize} the input:
-
-\begin{itemize}
-\item transform into a form analyzable for further passes
-\end{itemize}
-
-Input normalization is \alert{essential}:
-
-\begin{itemize}
-\item keep passes implementation manageable
-\end{itemize}
+\section{Documentation}
+\begin{frame}[t]{LLVM official documentation}
+  \begin{center}
+    \begin{Huge}
+      \vfill
+      \url{llvm.org/docs}
+      \vfill
+    \end{Huge}
+  \end{center}
 \end{frame}
+%--- Next Frame ---%
 
-\begin{frame}{LLVM IR Language}{Static Single Assignment}
-LLVM IR is SSA-based:
-
-\begin{itemize}
-\item every variable is \alert{statically assigned} exactly \alert{once}
-\end{itemize}
-
-Statically means that:
-
-\begin{itemize}
-\item inside each function
-\item for each variable \llvminline{\%foo}
-\item there is only one statement in the form \llvminline{\%foo = ...}
-\end{itemize}
-
-Static is different from dynamic:
-
-\begin{itemize}
-\item a static assignment can be executed more than once
-\end{itemize}
+\begin{frame}[t]{A lot of documentation...}
+  \url{llvm.org/docs} mentions:
+  \begin{itemize}
+    \item \texttt{\ 5} references about \textit{Design \& Overview}
+    \item \texttt{19} references about \textit{User Guides}
+    \item \texttt{13} references about \textit{Programming Documentation}
+    \item \texttt{32} references about \textit{Subsystem Documentation}
+    \item \texttt{\ 7} references about \textit{Development Process Documentation}
+    \item \texttt{\ 5} Mailing Lists
+    \item \texttt{\ 5} IRC bots
+  \end{itemize}
+  \vfill
+  Most of the above references are OUT-OF-DATE.
+  \vfill
+  You probably need documentation about the documentation itself.
+  \vfill
 \end{frame}
+%--- Next Frame ---%
 
-\begin{frame}{Static Single Assignment}{Examples}
-\begin{block}{Scalar SAXPY}
-\centering
-\cinput{snippet/02/scalar-saxpy.c}
-\end{block}
-
-\begin{block}{Scalar LLVM SAXPY}
-\centering
-\llvminput{snippet/02/scalar-saxpy.ll}
-\end{block}
-
-Temporary \llvminline{\%1} not reused! \llvminline{\%2} is used for the second
-assignment!
-\end{frame}
-
-\begin{frame}{Static Single Assignment}{Examples}
-\begin{block}{Array SAXPY}
-\centering
-\cinput{snippet/02/array-saxpy.c}
-\end{block}
-
-\begin{block}{Array LLVM SAXPY}
-\centering
-\llvminput{snippet/02/array-saxpy.ll}
-\end{block}
-
-One assignment for loop counter \llvminline{\%i.0}
-\end{frame}
-
-\begin{frame}{Static Single Assignment}{Handling Multiple Assignments}
-\begin{block}{Max}
-\centering
-\cinput{snippet/02/max.c}
-\end{block}
-
-\begin{block}{LLVM Max -- Bad}
-\centering
-\llvminput{snippet/02/bad-max.ll}
-\end{block}
-
-Why is it bad?
-\end{frame}
-
-\begin{frame}{Static Single Assignment}{Use \llvminline{phi} to Avoid Troubles}
-The \llvminline{\%5} variable must be statically set once
-
-\begin{block}{LLVM Max}
-\centering
-\llvminput{snippet/02/good-max.ll}
-\end{block}
-
-The \llvminline{phi} instructions is a \emph{conditional move}:
-
-\begin{itemize}
-\item it takes $(variable_i, label_i)$ pairs
-\item if coming from predecessor identified by $label_i$, return $variable_i$
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Static Single Assignment}{Definition and Uses}
-Each SSA variable is set only once:
-
-\begin{itemize}
-\item variable \alert{definition}
-\end{itemize}
-
-Each SSA variable can be used by multiple instructions:
-
-\begin{itemize}
-\item variable \alert{uses}
-\end{itemize}
-
-Algorithms and technical language abuse of these terms:
-
-\bigskip
-\emph{
-Let \llvminline{\%foo} be a variable. If \llvminline{\%foo} definition has not
-side-effects, and no uses, dead-code elimination can be efficiently performed
-by erasing \llvminline{\%foo} definition from the CFG.
-}
-\end{frame}
-
-\begin{frame}{Static Single Assignment}{Rationale}
-Old compilers are not SSA-based:
-
-\begin{itemize}
-\item putting input into SSA-form is expensive
-\item cost must be amortized
-\end{itemize}
-
-New compilers are SSA-based:
-
-\begin{itemize}
-\item SSA easier to work with
-\item SSA-based analysis/optimizations faster
-\end{itemize}
-
-All modern compilers are SSA-based:
-
-\begin{itemize}
-\item exception is HotSpot Client compiler
-\end{itemize}
+\begin{frame}[t]{Essential documentation}
+  \begin{description}
+    \item[Intro to LLVM] \cite{LOCAL:www/llvmIntro}
+          gives a quick and clear introduction to the compiler infrastructure.
+          It is mostly up-to-date.\footnote{at the time I am writing}
+    \vfill
+    \item[Writing an LLVM pass] \cite{LOCAL:www/llvmWritingAPass}
+          explains step by step how to implement a Pass
+          for those who never did anything like that.
+          We will see this tutorial later in the course.
+    \vfill
+    \item[Doxygen] \cite{LOCAL:www/llvmDoxygen}
+          \textit{The best code documentation is the code itself.}
+          Sometimes the generated doxygen documentation is enough.
+          It also contains links to the web version of the source code.
+          It is always up-to-date.
+    \vfill
+    \item[llvm-dev] Mailing List. Last resource: ask other developers.
+          Warning: 24/7 many people are posting in this ML.
+  \end{description}
 \end{frame}
 
 \section{Normalization Passes}
@@ -230,10 +136,10 @@ We will see the following passes:
 \midrule
 
 Variable promotion  &
-\texttt{mem2reg}   \\ 
+\texttt{mem2reg}   \\
 
 Loop simplify           &
-\texttt{loop-simplify} \\ 
+\texttt{loop-simplify} \\
 
 Loop-closed SSA  &
 \texttt{lcssa}  \\
@@ -314,7 +220,7 @@ The \texttt{mem2reg} pass focus on:
 Also available as utility:
 
 \begin{itemize}
-\item \cppinline{llvm::PromoteMemToReg}\footnote{see Transforms/Utils/PromoteMemoryToRegister.cpp}
+\item \cppinline{llvm::PromoteMemToReg}\footnote{see lib/Transforms/Utils/PromoteMemoryToRegister.cpp}
 \end{itemize}
 \end{frame}
 
@@ -627,7 +533,7 @@ We will see the following passes:
 \midrule
 
 Control flow graph  &
-\texttt{none}       & 
+\texttt{none}       &
 No                 \\
 
 Dominator tree    &
@@ -761,7 +667,7 @@ Every basic block \cppinline{BB} has one or more:
 
 \begin{description}
 \item[predecessors] from \cppinline{pred\_begin(BB)} to
-      \cppinline{pred\_end(BB)}
+      \cppinline{pred\_end(BB)} \footnote{see include/llvm/IR/CFG.h}
 \item[successors] from \cppinline{succ\_begin(BB)} to
       \cppinline{succ\_end(BB)}
 \end{description}
@@ -851,6 +757,7 @@ A value is a \alert{definition}:
 \begin{itemize}
 \item \cppinline{llvm::Value::use\_begin()},
       \cppinline{llvm::Value::use\_end()} to visit uses
+      \footnote{\cppinline{llvm::Instruction} derives from \cppinline{llvm::Value}}
 \end{itemize}
 
 An user access \alert{definitions}:
@@ -858,6 +765,7 @@ An user access \alert{definitions}:
 \begin{itemize}
 \item \cppinline{llvm::User::op\_begin()},
       \cppinline{llvm::User::op\_end()} to visit used values
+      \footnote{\cppinline{llvm::Value} derives from \cppinline{llvm::User}}
 \end{itemize}
 
 \begin{columns}[t]
@@ -1018,7 +926,7 @@ The \alert{SC}alar \alert{EV}olution framework:
 \item is designed to support \alert{general induction variables}
 \end{itemize}
 
-\begin{columns}3\column{.64\textwidth}
+\begin{columns}\column{.64\textwidth}
 \begin{block}{Example}
 \centering
 \llvminput{snippet/02/basic-scev.ll}
@@ -1114,7 +1022,7 @@ SCEV tree explorable through the visitor pattern:
 The \cppinline{llvm::ScalarEvolution} class:
 
 \begin{itemize}
-\item analyzes SCEVs for a \cppinline{llvm::Function} 
+\item analyzes SCEVs for a \cppinline{llvm::Function}
 \item builds SCEVs for values: \\
       \cppinline{llvm::ScalarEvolution::getSCEV(llvm::Value *)}
 \item creates new SCEVs: \\
@@ -1350,7 +1258,7 @@ Please remember that
 \section{Bibliography}
 \begin{frame}[allowframebreaks]{Bibliography}
 \nocite{*}
-\bibliographystyle{plain}
+\bibliographystyle{unsrt}
 \bibliography{bibliography-2}
 \end{frame}
 \end{document}

@@ -21,9 +21,10 @@
 
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{13-04-2016}
+\date{06-05-2016}
 \title{Introduction to LLVM compiler framework}
-\newcommand{\customdata}{Stefano Cherubin <name.surname@polimi.it>}
+\subtitle{Course outline}
+\newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
 \lstset{basicstyle=\ttfamily\scriptsize}
 \newcommand{\cinput}[1]{\lstinputlisting[language=C]{#1}}
@@ -119,119 +120,58 @@
 %--- Next Frame ---%
 
 \begin{frame}[t]{About the course}
+  \begin{Large}
+  \vfill
+  \begin{enumerate}
+    \item First part
+      \begin{itemize}
+        \vfill
+        \item Compiler design
+        \vfill
+        \item LLVM structure overview
+        \vfill
+        \item LLVM-IR language
+    \end{itemize}
+    \vfill
+    \item Second part
+      \begin{itemize}
+        \item Available middle-end passes (overview)
+        \vfill
+        \begin{itemize}
+          \item Normalization
+        \vfill
+          \item Analysis
+        \end{itemize}
+        \vfill
+        \item LLVM quick start tutorial
+      \end{itemize}
+  \end{enumerate}
+  \vfill
+\end{Large}
+\end{frame}
+%--- Next Frame ---%
+
+\begin{frame}[t]{Goal of the course}
+  At the end of these lectures you should:
   \begin{itemize}
-    \item Compiler design
-    \item LLVM tools overview
-    \item LLVM-IR language
-    \item 
+    \vfill
+    \item understand the LLVM compiler infrastructure
+    \vfill
+    \item be able to read a file .ll (LLVM-IR)
+    \vfill
+    \item know where to look for documentation
+    \vfill
+    \item know which are the main middle-end weapons
+          LLVM provides out of the box
+    \vfill
+    \item know how to implement a simple analysis / transformation
+    \vfill
+    \item know how to test your code
   \end{itemize}
 \end{frame}
 %--- Next Frame ---%
 
-\section{Introduction}
-\begin{frame}{Understanding LLVM}
-	\begin{center}
-	\huge{
-		LLVM is not a compiler.\\
-		\pause
-		\vfill
-		LLVM is a collection of components\\
-		which is useful to build a compiler.
-	}
-	\end{center}
-\end{frame}
-
-\begin{frame}{What LLVM is made of}
-\begin{itemize}
-	\item C++ libraries
-		\begin{itemize}
-			\item \texttt{src/include/llvm/...}
-			\item \texttt{src/lib/...}
-		\end{itemize}
-		\vfill
-	\item small application (tools)
-		\begin{itemize}
-			\item \texttt{src/tools/...}
-			\item \texttt{src/utils/...}
-		\end{itemize}
-\end{itemize}
-\vfill
-You can find binaries of them in the installation directory under \texttt{root/bin/...}
-\end{frame}
-
-\begin{frame}{clang}
-\begin{itemize}
-	\item \texttt{clang} is a compiler based on LLVM.
-	\vfill
-	\item It compiles all major C-like languages
-	\vfill
-	\item It can be added as a tool in the LLVM framework but must be manually cloned in the tool directory
-	\begin{enumerate}
-		\item \texttt{cd src/tools}
-		\item \texttt{git clone http://llvm.org/git/clang}
-	\end{enumerate}
-	\vfill
-	\item You can easily see on a production quality compiler the impact of changes you made on your local copy of LLVM
-\end{itemize}
-\end{frame}
-
-\section{LLVM framework quick start}
-\begin{frame}{Commands}
-	\begin{description}
-		\item[llvm-as] LLVM assembler
-		\item[llvm-dis] LLVM disassembler
-		\item[opt] LLVM optimizer
-		\item[llc] LLVM static compiler
-		\item[lli] directly execute programs from LLVM bitcode
-		\item[llvm-link] LLVM bitcode linker
-		\item[llvm-lib] LLVM lib.exe compatible library tool
-		\item[llvm-nm] list LLVM bitcode and object file's symbol table
-		\item[llvm-config] Print LLVM compilation options
-		\item[llvm-stress] generate random .ll files
-		\item[llvm-dwarfdump] print contents of DWARF sections
-	\end{description}
-	\vfill
-	For a complete reference, see LLVM command guide \footnote{\url{http://llvm.org/docs/CommandGuide/index.html}}
-\end{frame}
-
-\begin{frame}
-	\noindent\hspace{-1.2cm}\includegraphics[width=13cm]{img/03/toolchain}
-\end{frame}
-
-\begin{frame}{Writing a LLVM pass}
-	There are a lot of tutorials available:
-	\vfill
-	\begin{itemize}
-		\item Official developer guide\\ \href{http://llvm.org/docs/WritingAnLLVMPass.html}{\url{llvm.org/docs/WritingAnLLVMPass}}
-		\vfill
-		\item Out-of-source pass\\ \href{https://github.com/quarkslab/llvm-dev-meeting-tutorial-2015}{\url{github.com/quarkslab/llvm-dev-meeting-tutorial-2015}}
-	\end{itemize}
-	\vfill
-	We will follow the first one, with a few adjustments.
-\end{frame}
-
-\begin{frame}{Testing}
-LLVM has an internal testing infrastructure. \footnote{\url{http://llvm.org/docs/TestingGuide.html}}
-Please use it.
-\\
-\begin{description}
-	\item[llvm-lit] LLVM Integrated Tester
-\end{description}
-\begin{enumerate}
-	\item Forge a proper LLVM-IR input file (.ll) for your test case
-	\item Instrument it with \texttt{lit} script comments
-	\item Run \texttt{lit} on your test
-		\begin{itemize}
-			\item \texttt{llvm-lit ~/llvm/test/myTests/singleTest.ll}\\ run a single test
-			\item \texttt{llvm-lit ~/llvm/test/myTests}\\ run the test suite (folder)
-		\end{itemize}
-	\item Run \texttt{lit} on the LLVM test suite (regression testing)
-\end{enumerate}
-\vfill
-To submit a bug report to LLVM developers you will be asked to write a \texttt{lit} test case that highlights the bug.
-\end{frame}
-
-\section{Bibliography}
+\section*{Bibliography}
 \begin{frame}[allowframebreaks]{Bibliography}
 \nocite{*}
 \bibliographystyle{unsrt}

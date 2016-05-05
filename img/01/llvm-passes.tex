@@ -1,0 +1,33 @@
+
+% llvm-passes: hierarchy of LLVM passes.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\scriptsize
+  },
+  extends/.style={
+    draw,
+    open triangle 90-
+  },
+  level distance=10mm,
+  level 1/.style={
+    sibling distance=20mm
+  },
+  level 3/.style={
+    sibling distance=20mm
+  }
+]
+
+\node {Pass}
+  [edge from parent fork down,
+   edge from parent/.style={extends}]
+
+  child { node {CallGraphSCCPass}}
+  child { node {ModulePass}
+    child { node {ImmutablePass}}
+  }
+  child { node {FunctionPass}}
+  child {node {LoopPass}}
+  child {node {BasicBlockPass}};
+\end{tikzpicture}

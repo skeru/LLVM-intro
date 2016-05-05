@@ -1,0 +1,39 @@
+
+% while-loop.tex: while loop shape.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  every initial by arrow/.style={
+    shorten >=.5mm
+  },
+  every accepting by arrow/.style={
+    shorten <=.5mm
+  },
+  entry above/.style={
+    initial above,
+    initial text=
+  },
+  exit below/.style={
+    accepting below
+  },
+  bb/.style={
+    circle,
+    draw
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  }
+]
+
+\node (entry) [bb,entry above,exit below] {$1$};
+\node (body)  [bb,right=4mm of entry] {$2$};
+
+\path [tip, bend right] (entry) edge (body);
+\path [tip, bend right] (body) edge (entry);
+\end{tikzpicture}

@@ -1,0 +1,45 @@
+
+% alias-analysis-distinct.tex: different locations.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  location/.style={
+    rectangle split,
+    rectangle split parts=2,
+    rotate=90,
+    draw
+  },
+  location-a/.style={
+    location,
+    rectangle split part fill={
+      red!30,
+      red!30
+    }
+  },
+  location-b/.style={
+    location,
+    rectangle split part fill={
+      blue!30,
+      blue!30
+    }
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  }
+]
+
+\matrix [column sep=4mm]
+{
+\node (a) {\llvminline{\%a}}; & \node (a-loc) [location-a] {}; \\
+\node (b) {\llvminline{\%b}}; & \node (b-loc) [location-b] {}; \\
+};
+
+\path [tip] (a) edge (a-loc.north);
+\path [tip] (b) edge (b-loc.north);
+\end{tikzpicture}

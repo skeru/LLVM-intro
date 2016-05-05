@@ -1,0 +1,36 @@
+
+% alias-analysis-overlapping.tex: overlapping locations.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  location/.style={
+    rectangle split,
+    rectangle split parts=3,
+    rectangle split part fill={
+      red!30,
+      red!30!blue!30,
+      blue!30
+    },
+    rotate=90,
+    draw
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  }
+]
+
+\matrix [column sep=4mm]
+{
+\node (a) {\llvminline{\%a}}; & \node (loc) [location] {}; \\
+\node (b) {\llvminline{\%b}}; &                            \\
+};
+
+\path [tip]           (a) edge (loc.north);
+\path [tip,bend right] (b) edge (loc.text split west);
+\end{tikzpicture}

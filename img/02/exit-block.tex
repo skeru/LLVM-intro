@@ -1,0 +1,61 @@
+
+% exit-block.tex: ensure loop exit dominated by loop header.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  every initial by arrow/.style={
+    shorten >=.5mm
+  },
+  every accepting by arrow/.style={
+    shorten <=.5mm
+  },
+  entry above/.style={
+    initial above,
+    initial text=
+  },
+  entry left/.style={
+    initial left,
+    initial text=
+  },
+  exit below/.style={
+    accepting below
+  },
+  bb/.style={
+    circle,
+    draw
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  }
+]
+
+\node (pre-header) [bb,entry above,fill=red!30] {$0$};
+
+\node (entry)  [bb,below=4mm of pre-header] {$1$};
+\node (body-1) [bb,right=4mm of entry] {$2$};
+\node (body-2) [bb,right=4mm of body-1] {$3$};
+\node (latch)  [bb,above=4mm of body-1,fill=green!30] {$6$};
+
+\node (exit-0) [bb,below=4mm of body-1,fill=blue!30] {$7$};
+\node (exit-1) [bb,entry left,exit below,below=4mm of entry] {$4$};
+\node (exit-2) [bb,exit below,below=4mm of body-2] {$5$};
+
+\path [tip,color=red] (pre-header) edge (entry);
+
+\path [tip,bend left] (entry) edge (body-1);
+\path [tip,bend left] (body-1) edge (body-2);
+
+\path [tip,color=green]            (body-1) edge (latch);
+\path [tip,color=green,bend right] (body-2) edge (latch);
+\path [tip,color=green,bend right] (latch) edge (entry);
+
+\path [tip,bend left,color=blue]  (entry) edge (exit-0);
+\path [tip,bend right,color=blue] (exit-0) edge (exit-1);
+\path [tip,bend left]             (body-2) edge (exit-2);
+\end{tikzpicture}

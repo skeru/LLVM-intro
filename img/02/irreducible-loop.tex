@@ -1,0 +1,43 @@
+
+% irreducible-loop.tex: irreducible loop shape.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  every initial by arrow/.style={
+    shorten >=.5mm
+  },
+  every accepting by arrow/.style={
+    shorten <=.5mm
+  },
+  entry above/.style={
+    initial above,
+    initial text=
+  },
+  exit below/.style={
+    accepting below
+  },
+  bb/.style={
+    circle,
+    draw
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  }
+]
+
+\node (entry)  [bb,entry above] {$1$};
+\node (body-1) [bb,exit below,below left=4mm of entry] {$2$};
+\node (body-2) [bb,exit below,below right=4mm of entry] {$3$};
+
+\path [tip,bend right] (entry) edge (body-1);
+\path [tip,bend left]  (entry) edge (body-2);
+
+\path [tip,bend right] (body-1) edge (body-2);
+\path [tip,bend right] (body-2) edge (body-1);
+\end{tikzpicture}

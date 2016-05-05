@@ -1,0 +1,29 @@
+
+% loop-nest.tex: a simple loop nest.
+
+\begin{tikzpicture}
+[
+  every node/.style={
+    font=\tiny
+  },
+  loop/.style={
+    circle,
+    draw
+  },
+  tip/.style={
+    shorten <=.5mm,
+    shorten >=.5mm,
+    ->,
+    draw
+  },
+  level 1/.style={
+    edge from parent/.style=tip
+  },
+]
+
+\node [loop] {$1$}
+  child { node [loop] {$2$}
+    child { node [loop] {$3$}}
+  }
+  child { node [loop] {$4$}};
+\end{tikzpicture}

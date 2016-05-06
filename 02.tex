@@ -19,7 +19,7 @@
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
 \date{06-05-2016}
-\title{LLVM Passes}
+\title{Exploring LLVM}
 \newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
 \lstset{basicstyle=\ttfamily\scriptsize}
@@ -710,7 +710,7 @@ The value produced by the instruction is the \alert{instruction itself}:
 Consider:
 
 \centering
-\llvminline{\%6 = load i32* \%1, align 4}
+\llvminline{\%6 = load i32, i32* \%1, align 4}
 
 \flushleft
 the \llvminline{load} is described
@@ -804,7 +804,7 @@ Since every instructions is/define a value:
 Consider:
 
 \centering
-\llvminline{\%6 = load i32* \%1, align 4}
+\llvminline{\%6 = load i32, i32* \%1, align 4}
 
 \flushleft
 the \llvminline{\%6} variable actually is the instruction itself. Its type is

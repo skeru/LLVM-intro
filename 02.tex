@@ -224,7 +224,7 @@ Also available as utility:
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Variable Promotion}{Example}
+\begin{frame}{Variable Promotion}{Example on simplified code}
 \begin{columns}[t]
 \column{.45\textwidth}
 \begin{block}{Starting Point}
@@ -413,6 +413,8 @@ The example is trivial:
 \centering
 \llvminput{snippet/02/before-lcssa.ll}
 \end{block}
+\vspace{\baselineskip}
+\vfill
 \end{frame}
 
 \begin{frame}{Loop-closed SSA}{Example}
@@ -420,6 +422,7 @@ The example is trivial:
 \centering
 \llvminput{snippet/02/after-lcssa.ll}
 \end{block}
+\vfill
 \end{frame}
 
 \begin{frame}{Induction Variables}
@@ -495,25 +498,23 @@ Other normalization passes available:
 \section{Analysis Passes}
 \begin{frame}{Checking Input Properties}
 Analysis basically allows to:
-
 \begin{itemize}
 \item \alert{derive} information and properties of the input
 \item \alert{verify} properties of input
 \end{itemize}
 
+\vfill
 Keeping analysis information is expensive:
-
 \begin{itemize}
 \item tuned algorithms updates analysis information when an optimization
       invalidates them
 \item incrementally updating analysis is cheaper than recomputing them
 \end{itemize}
 
+\vfill
 Many LLVM analysis supports incremental updates:
-
 \begin{itemize}
 \item this is an \alert{optimization}
-\item forget this feature for the home-work
 \item focus on \alert{information} provided by analysis
 \end{itemize}
 \end{frame}
@@ -563,13 +564,25 @@ Yes               \\
 \bottomrule
 \end{tabular}
 \end{block}
+\end{frame}
 
+\begin{frame}{Require Analysis}
+Ask the pass manager to schedule a specific pass
+before running the current one.
+
+\vfill
 Requiring analysis by transitivity:
-
 \begin{description}
 \item[yes] \cppinline{llvm::AnalysisUsage::addRequiredTransitive<T>()}
 \item[no] \cppinline{llvm::AnalysisUsage::addRequired<T>()}
 \end{description}
+
+\vfill
+In cases where \alert{analyses chain},the addRequiredTransitive method
+should be used instead of the addRequired method.
+
+This informs the PassManager that the transitively required pass
+should be alive as long as the requiring pass is.
 \end{frame}
 
 \begin{frame}{Control Flow Graph}
@@ -897,10 +910,10 @@ Nest navigation:
 Accessors for relevant nodes also available:
 
 \begin{description}
-\item[pre-header] \cppinline{llvm::Loop:getLoopPreheader()}
+\item[pre-header] \cppinline{llvm::Loop::getLoopPreheader()}
 \item[header] \cppinline{llvm::Loop::getHeader()}
 \item[latch] \cppinline{llvm::Loop::getLoopLatch()}
-\item[exiting] \cppinline{llvm::Loop::getLoopExiting()}, \\
+\item[exiting] \cppinline{llvm::Loop::getExitingBlock()}, \\
                \cppinline{llvm::Loop::getExitingBlocks(...)}
 \item[exit] \cppinline{llvm::Loop::getExitBlock()} \\
             \cppinline{llvm::Loop::getExitBlocks(...)}
@@ -977,8 +990,8 @@ The scalar evolution framework manages \alert{any scalar expression}:
 \llvminput{snippet/02/nested-scev-pointer.ll}
 \end{block}
 
+\vfill
 SCEV is an analysis used for common optimizations:
-
 \begin{itemize}
 \item induction variable substitution
 \item strength reduction
@@ -1106,20 +1119,20 @@ Basic building block is \cppinline{llvm::AliasAnalysis::Location}:
 Given two locations $X$, $Y$, the alias analyzer classifies them:
 
 \begin{itemize}
-\item \cppinline{llvm::AliasAnalyzer::NoAlias}: $X$ and $Y$ are different
-      memory locations
-\item \cppinline{llvm::AliasAnalyzer::MustAlias}: $X$ and $Y$ are equal -- i.e.
-      they points to the same address
-\item \cppinline{llvm::AliasAnalyzer::PartialAlias}: $X$ and $Y$ partially
-      overlap -- i.e. they points to different addresses, but the pointed memory
-      areas partially overlap
-\item \cppinline{llvm::AliasAnalyzer::MayAlias}: unable to compute aliasing
-      information -- i.e. $X$ and $Y$ can be different locations, or $X$ can be
-      a complete/partial alias of $Y$
+\item \cppinline{llvm::AliasAnalyzer::NoAlias}: $X$ and $Y$ \alert{are
+      different} memory locations
+\item \cppinline{llvm::AliasAnalyzer::MustAlias}: $X$ and $Y$ \alert{are equal}
+      -- i.e. they points to the same address
+\item \cppinline{llvm::AliasAnalyzer::PartialAlias}: $X$ and $Y$
+      \alert{partially overlap} -- i.e. they points to different addresses,
+      but the pointed memory areas partially overlap
+\item \cppinline{llvm::AliasAnalyzer::MayAlias}: \alert{unable to compute}
+      aliasing information -- i.e. $X$ and $Y$ can be different locations,
+      or $X$ can be a complete/partial alias of $Y$
 \end{itemize}
 
+\vfill
 Queries performed using:
-
 \begin{itemize}
 \item \cppinline{llvm::AliasAnalyzer::alias(X, Y)}
 \end{itemize}
@@ -1134,14 +1147,16 @@ about a single pointer $X$:
 \item which other instructions reference the same location?
 \end{itemize}
 
+\vfill
 What we need is a set, to classify memory locations:
 
 \begin{itemize}
 \item construct a \cppinline{llvm::AliasSetTracker} starting from a
       \cppinline{llvm::AliasAnalyer *}
-\item it builds \cppinline{llvm::AliasSet}s
+\item it builds (one or more) \cppinline{llvm::AliasSet}
 \end{itemize}
 
+\vfill
 For a given location $X$, a \cppinline{llvm::AliasSet}:
 
 \begin{itemize}
@@ -1247,12 +1262,14 @@ Inside LLVM there a lot of passes:
 \item[analysis] get info about program
 \end{description}
 
+\vfill
 Please remember that
 
 \begin{itemize}
 \item a good compiler writer \alert{re-uses} code
 \item check LLVM sources before re-implementing a pass
 \end{itemize}
+\vfill
 \end{frame}
 
 \section{Bibliography}

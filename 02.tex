@@ -18,7 +18,7 @@
 
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{06-05-2016}
+\date{19-04-2017}
 \title{Exploring LLVM}
 \newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
@@ -165,6 +165,7 @@ One of the most difficult things in compiler is:
 \item considering memory accesses
 \end{itemize}
 
+\vfill
 \begin{block}{Plain SAXPY}
 \centering
 \llvminput{snippet/02/plain-saxpy.ll}
@@ -178,6 +179,7 @@ In the SAXPY kernel some \llvminline{alloca} are generated:
 \item represent \alert{local variables}~\footnote{Arguments are local variables}
 \end{itemize}
 
+\vfill
 They are generated due to compiler \alert{conservative} approach:
 
 \begin{itemize}
@@ -185,6 +187,7 @@ They are generated due to compiler \alert{conservative} approach:
       memory location is needed
 \end{itemize}
 
+\vfill
 Complex representations makes hard performing further actions:
 
 \begin{itemize}
@@ -202,6 +205,7 @@ To limit the number of instruction accessing memory:
 \item achieved by \alert{promoting} variables from memory to registers
 \end{itemize}
 
+\vfill
 Inside LLVM SSA-based representation:
 
 \begin{description}
@@ -210,6 +214,7 @@ Inside LLVM SSA-based representation:
 \item[register] SSA variables -- e.g. \llvminline{\%a}
 \end{description}
 
+\vfill
 The \texttt{mem2reg} pass focus on:
 
 \begin{itemize}
@@ -287,6 +292,7 @@ A natural loop:
 \item there is a back edge that enter the loop header
 \end{itemize}
 
+\vfill
 Under this definition:
 
 \begin{itemize}
@@ -299,6 +305,7 @@ Under this definition:
 \begin{frame}{Loop Terminology}
 Loops defined starting from back-edges:
 
+\vfill
 \begin{description}
 \item[back-edge] edge entering loop header: $(3,1)$
 \end{description}
@@ -334,6 +341,7 @@ Natural loops finding is the base pass \alert{identify} loops, but:
 \item some features are not analysis/optimization friendly
 \end{itemize}
 
+\vfill
 The \texttt{loop-simplify} pass normalize natural loops:
 
 \begin{columns}[t]
@@ -382,12 +390,13 @@ Loop representation can be further normalized:
 \item nothing is said about loop definitions
 \end{itemize}
 
+\vfill
 Keeping SSA form is expensive with loops:
 
 \begin{itemize}
 \item \texttt{lcssa} insert \llvminline{phi} instruction at loop boundaries for
       variables \alert{defined inside} the loop body and \alert{used outside}
-\item this guarantee isolation between optimization performed inside and outside
+\item this guarantees isolation between optimization performed inside and outside
       the loop
 \item faster keeping IR into SSA form -- propagation of code changes outside the
       loop blocked by \llvminline{phi} instructions
@@ -400,6 +409,7 @@ Keeping SSA form is expensive with loops:
 \cinput{snippet/02/lcssa.c}
 \end{block}
 
+\vfill
 The example is trivial:
 
 \begin{itemize}
@@ -432,6 +442,7 @@ Some loop variables are \emph{special}:
 \item e.g. counters
 \end{itemize}
 
+\vfill
 Generalization lead to \alert{induction variables}:
 
 \begin{itemize}
@@ -464,6 +475,7 @@ Canonical induction variables are used to \alert{drive} loop execution:
       induction variable
 \end{itemize}
 
+\vfill
 With respect to theory, LLVM canonical induction variable is:
 
 \begin{itemize}
@@ -486,6 +498,7 @@ Normalization passes running order:
       canonical induction variable
 \end{enumerate}
 
+\vfill
 Other normalization passes available:
 
 \begin{itemize}
@@ -592,6 +605,7 @@ The Control Flow Graph is implicitly maintained by LLVM:
 \item no specific pass to build it
 \end{itemize}
 
+\vfill
 Recap:
 
 \begin{itemize}
@@ -599,6 +613,7 @@ Recap:
 \item a basic block is a set of instructions
 \end{itemize}
 
+\vfill
 Functions and basic blocks acts like containers:
 
 \begin{itemize}
@@ -607,6 +622,7 @@ Functions and basic blocks acts like containers:
 \item STL-like iterators: \cppinline{begin()}, \cppinline{end()}
 \end{itemize}
 
+\vfill
 Each contained element is aware of its container:
 
 \begin{itemize}
@@ -623,6 +639,7 @@ Every CFG has an entry basic block:
 \item get it with \cppinline{llvm::Function::getEntryBlock()}
 \end{itemize}
 
+\vfill
 More than one exit blocks can be generated:
 
 \begin{itemize}
@@ -685,6 +702,7 @@ Every basic block \cppinline{BB} has one or more:
       \cppinline{succ\_end(BB)}
 \end{description}
 
+\vfill
 Convenience accessors directly available in \cppinline{llvm::BasicBlock}:
 
 \begin{itemize}
@@ -717,6 +735,8 @@ Subclasses provide specialized accessors:
       \cppinline{llvm::LoadInst::getPointerOperand()}
 \end{itemize}
 
+\pause
+\vfill
 The value produced by the instruction is the \alert{instruction itself}:
 
 \begin{block}{Example}
@@ -747,6 +767,7 @@ Interface is not homogeneous:
 \item others support only one
 \end{itemize}
 
+\vfill
 At build-time, instructions can be:
 
 \begin{itemize}
@@ -781,6 +802,7 @@ An user access \alert{definitions}:
       \footnote{\cppinline{llvm::Value} derives from \cppinline{llvm::User}}
 \end{itemize}
 
+\vfill
 \begin{columns}[t]
 \column{.45\textwidth}
 Functions:
@@ -807,12 +829,14 @@ Every \cppinline{llvm::Value} is typed:
 \item use \cppinline{llvm::Value::getType()} to get the type
 \end{itemize}
 
+\vfill
 Since every instructions is/define a value:
 
 \begin{itemize}
 \item instructions are typed
 \end{itemize}
 
+\vfill
 \begin{block}{Example}
 Consider:
 
@@ -820,8 +844,10 @@ Consider:
 \llvminline{\%6 = load i32, i32* \%1, align 4}
 
 \flushleft
-the \llvminline{\%6} variable actually is the instruction itself. Its type is
-the type of \llvminline{load} return value, \llvminline{i32}
+\begin{itemize}
+\item The \llvminline{\%6} variable actually is the instruction itself
+\item Its type is the type of \llvminline{load} return value, \llvminline{i32}
+\end{itemize}
 \end{block}
 \end{frame}
 
@@ -842,7 +868,7 @@ Dominance trees answer to control-related queries:
 \end{itemize}
 \end{columns}
 
-\bigskip
+\vfill
 The two trees interface is similar:
 
 \begin{itemize}
@@ -853,8 +879,8 @@ The two trees interface is similar:
 Where \cppinline{X} is an \cppinline{llvm::BasicBlock} or an
 \cppinline{llvm::Instruction}
 
-\bigskip
-Using \texttt{opt} is possible printing them:
+\vfill
+by using \texttt{opt}, it is possible print them:
 
 \begin{itemize}
 \item \texttt{-view-dom}, \texttt{-dot-dom}
@@ -870,6 +896,7 @@ Loop information are represented using two classes:
 \item \cppinline{llvm::Loop} represents a single loop
 \end{itemize}
 
+\vfill
 Using \cppinline{llvm::LoopInfo} it is possible:
 
 \begin{itemize}
@@ -919,6 +946,7 @@ Accessors for relevant nodes also available:
             \cppinline{llvm::Loop::getExitBlocks(...)}
 \end{description}
 
+\vfill
 Loop basic blocks accessible via:
 
 \begin{description}
@@ -928,6 +956,7 @@ Loop basic blocks accessible via:
       \cppinline{std::vector<llvm::BasicBlock *> \&llvm::Loop::getBlocks()}
 \end{description}
 \end{frame}
+
 
 \begin{frame}{Scalar Evolution}
 The \alert{SC}alar \alert{EV}olution framework:
@@ -939,6 +968,7 @@ The \alert{SC}alar \alert{EV}olution framework:
 \item is designed to support \alert{general induction variables}
 \end{itemize}
 
+\vfill
 \begin{columns}\column{.64\textwidth}
 \begin{block}{Example}
 \centering
@@ -976,6 +1006,7 @@ SCEV \llvminline{\{A,B,C\}<\%D>}:
 \end{itemize}
 \end{columns}
 
+\vfill
 \begin{block}{Induction Variables}
 \centering
 \llvminput{snippet/02/nested-scev-induction.ll}
@@ -1008,6 +1039,7 @@ SCEVs are modeled by the \cppinline{llvm::SCEV} class:
 \item instantiation disabled
 \end{itemize}
 
+\vfill
 A SCEV actually is a tree of SCEVs:
 
 \begin{itemize}
@@ -1036,19 +1068,23 @@ The \cppinline{llvm::ScalarEvolution} class:
 
 \begin{itemize}
 \item analyzes SCEVs for a \cppinline{llvm::Function}
+\vfill
 \item builds SCEVs for values: \\
       \cppinline{llvm::ScalarEvolution::getSCEV(llvm::Value *)}
+\vfill
 \item creates new SCEVs: \\
 % It looks horrible, but I must do that to take line length < of 80 chars.
 \cppinline{llvm::ScalarEvolution::getConstant(llvm::ConstantInt *)} \\
 \cppinline{llvm::ScalarEvolution::getAddExpr(llvm::SCEV *, llvm::SCEV *)} \\
 \ldots
+\vfill
 \item gets important SCEVs: \\
       \cppinline{llvm::ScalarEvolution::getBackedgeTakenCount(llvm::Loop *)} \\
       \cppinline{llvm::ScalarEvolution::getPointerBase(llvm::SCEV *)} \\
       \ldots
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Alias Analysis}
 Let $X$ be an instruction accessing a memory location:
@@ -1057,6 +1093,7 @@ Let $X$ be an instruction accessing a memory location:
 \item is there another instruction accessing the same location?
 \end{itemize}
 
+\vfill
 Alias analysis tries to answer the question:
 
 \begin{description}
@@ -1064,6 +1101,7 @@ Alias analysis tries to answer the question:
 \item[problem] often fails
 \end{description}
 
+\vfill
 Different algorithms for alias analysis:
 
 \begin{itemize}
@@ -1121,11 +1159,14 @@ Given two locations $X$, $Y$, the alias analyzer classifies them:
 \begin{itemize}
 \item \cppinline{llvm::AliasAnalyzer::NoAlias}: $X$ and $Y$ \alert{are
       different} memory locations
+\vfill
 \item \cppinline{llvm::AliasAnalyzer::MustAlias}: $X$ and $Y$ \alert{are equal}
       -- i.e. they points to the same address
+\vfill
 \item \cppinline{llvm::AliasAnalyzer::PartialAlias}: $X$ and $Y$
       \alert{partially overlap} -- i.e. they points to different addresses,
       but the pointed memory areas partially overlap
+\vfill
 \item \cppinline{llvm::AliasAnalyzer::MayAlias}: \alert{unable to compute}
       aliasing information -- i.e. $X$ and $Y$ can be different locations,
       or $X$ can be a complete/partial alias of $Y$
@@ -1167,15 +1208,20 @@ For a given location $X$, a \cppinline{llvm::AliasSet}:
 \begin{frame}{Alias Analyzer}{Alias Set Memory Accesses}
 Each alias set \alert{references} the memory:
 
+\vfill
 \begin{itemize}
 \item \cppinline{llvm::AliasSet::NoModRef}: no memory reference -- i.e. the set
       is empty
+\vfill
 \item \cppinline{llvm::AliasSet::Mod}: memory accessed in write-mode -- e.g. a
       \llvminline{store} is inside the set
+\vfill
 \item \cppinline{llvm::AliasSet::Ref}: memory accessed in read-mode -- e.g. a
       \llvminline{load} is inside the set
+\vfill
 \item \cppinline{llvm::AliasSet::ModRef}: memory accessed in read-write mode --
       e.g. a \llvminline{load} and a \llvminline{store} inside the set
+\vfill
 \end{itemize}
 \end{frame}
 
@@ -1191,6 +1237,7 @@ Entry point is \cppinline{llvm::AliasSetTracker::getAliasSetForPointer(...)}:
       created to hold the location -- location does not alias up to now
 \end{itemize}
 
+\vfill
 Having the \cppinline{llvm::AliasSet}:
 
 \begin{itemize}
@@ -1210,21 +1257,22 @@ queries in the following form:
       preceding instructions does \llvminline{\%foo} depends on?
 \end{itemize}
 
+\vfill
 \begin{columns}[t]
 \column{.45\textwidth}
 Reads:
 
 \begin{itemize}
-\item \llvminline{store}s writing memory locations aliases with the one
-      references by \llvminline{\%foo}
+\item \llvminline{store} instructions writing memory locations aliases with
+      the one references by \llvminline{\%foo}
 \end{itemize}
 
 \column{.45\textwidth}
 Writes:
 
 \begin{itemize}
-\item \llvminline{load}s reading memory locations aliased with the one
-      referenced by \llvminline{\%foo}
+\item \llvminline{load} instructionss reading memory locations aliased with
+      the one referenced by \llvminline{\%foo}
 \end{itemize}
 \end{columns}
 \end{frame}
@@ -1237,6 +1285,7 @@ Let \llvminline{\%foo} be a \cppinline{llvm::Instruction} accessing memory:
 \item you get a \llvminline{llvm::MemDepResult}
 \end{itemize}
 
+\vfill
 Dependencies are classified:
 
 \begin{itemize}

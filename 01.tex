@@ -21,7 +21,7 @@
 
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{06-05-2016}
+\date{12-04-2017}
 \title{Introduction to LLVM compiler framework}
 \newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
@@ -187,7 +187,7 @@ A compiler is \alert{complex}:
 \item passes are the \alert{elementary unit of work}
 \item pass manager must be \alert{advisee} about pass chaining
 \item pipeline shapes are \alert{not fixed} -- it can change from one compiler
-      execution to another~\footnote{e.g. optimized/not optimized builds}
+      execution to another~\footnote{e.g. optimized/not optimized builds, compiler options, ...}
 \end{itemize}
 
 \vfill
@@ -198,7 +198,7 @@ Moreover, compilers must be \alert{conservative}:
 \end{itemize}
 
 \vfill
-Compiler algorithms are designed differently!
+Compiler algorithms are designed differently w.r.t. standard algorithms!
 \end{frame}
 
 \section{Algorithm design}
@@ -233,9 +233,10 @@ Compiler algorithms are built combining three kind of \alert{passes}:
 \begin{itemize}
 \item analysis
 \item optimization
-\item normalization
+\item (normalization)
 \end{itemize}
 
+\pause
 \vfill
 We now consider a simple example: \emph{loop hoisting}.
 \end{frame}
@@ -264,17 +265,17 @@ It is a transformation that:
 
 
 \begin{frame}{Loop Hoisting}{Focus on the Transformation}
+\begin{block}{Transformation}
 The transformation is trivial:
-
 \begin{itemize}
 \item move ``good'' statement outside of the loop
 \end{itemize}
-
+\end{block}
 This is the \alert{optimization pass}. It needs to know:
 
 \begin{itemize}
-\item loops
-\item ``good'' statements
+\item which pieces of code are loops
+\item which statements are ``good'' statements
 \end{itemize}
 
 They are \alert{analysis} passes:
@@ -287,12 +288,12 @@ They are \alert{analysis} passes:
 When registering loop hoisting, also declare needed analysis:
 
 \begin{itemize}
-\item pipeline automatically built -- analysis $\rightarrow$ optimization
+\item pipeline automatically built: analysis $\rightarrow$ optimization
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Loop Hoisting}{Proving Program Semantic Preservation}
-The proof is trivial:
+The \alert{proof} is trivial:
 
 \begin{itemize}
 \item transformation is correct if analysis are correct, but \ldots
@@ -300,6 +301,7 @@ The proof is trivial:
       implemented inside the compiler
 \end{itemize}
 
+\vfill
 You have to prove that combining all analysis information gives you a
 correct view of the code:
 
@@ -337,8 +339,8 @@ What about other kinds of loops?
       normalization must be run before
 \end{itemize}
 
-This allows to recognize more loops, thus potentially improving optimization
-impact!
+This allows to recognize more loops, thus potentially
+\alert{improving optimization impact}!
 \end{frame}
 
 \begin{frame}{Compiler Algorithm Design}{A methodology}
@@ -354,7 +356,7 @@ You have to:
 \item proof its \alert{correctness}
 \item improve algorithm perfomance by acting on common case -- the only
       considered up to now. Please notice that corner cases are not considered
-      -- just do not optimize
+      -- just do not optimize corner cases
 \item improve the effectiveness of the algorithm by adding
       \alert{normalization passes}
 \end{enumerate}
@@ -372,7 +374,7 @@ LLVM IR comes with 3 different flavours:
 
 All formats have the same expressiveness!
 
-\bigskip
+\vfill
 File extensions:
 
 \begin{description}
@@ -395,6 +397,7 @@ The clang driver is compatible with GCC:
 \item $\approx$ same command line options
 \end{itemize}
 
+\vfill
 To generate LLVM IR:
 
 \begin{description}
@@ -415,6 +418,7 @@ LLVM IR can be manipulated using \texttt{\smaller opt}:
 \item respecting user-provided order
 \end{itemize}
 
+\vfill
 Useful passes:
 
 \begin{itemize}
@@ -426,8 +430,9 @@ Useful passes:
 Pass chaining:
 
 \begin{itemize}
-\item run \emph{mem2reg}~\footnote{More on this later}, then view the CFG with
-      \texttt{\smaller opt -mem2reg -view-cfg input.ll}
+\item run \emph{mem2reg}, then view the CFG with \\
+\texttt{\smaller opt -mem2reg -view-cfg input.ll}
+\item potentially different results using different option order (\alert{phase/stage ordering})
 \end{itemize}
 \end{frame}
 
@@ -438,6 +443,7 @@ LLVM provides a lot of passes:
 \item try \texttt{\smaller opt -help}
 \end{itemize}
 
+\vfill
 For performance reasons there are different kind of passes:
 
 \begin{block}{LLVM Passes}
@@ -458,12 +464,13 @@ Each pass kind visits particular elements of a module:
 \item[BasicBlockPass] visit basic blocks
 \end{description}
 
+\vfill
 Specializations comes with restrictions:
 
 \begin{itemize}
 \item e.g. a \alert{FunctionPass} cannot add or delete functions
-\item refer to~\cite{LOCAL:www/llvmWritingAPass} for accurate description of
-      features and limitations of each kind of pass
+\item refer to ``Writing a LLVM Pass''~\cite{LOCAL:www/llvmWritingAPass}
+      for accurate description of features and limitations of each kind of pass
 \end{itemize}
 \end{frame}
 
@@ -497,16 +504,13 @@ LLVM provides passes performing basic transformations:
 \item \ldots
 \end{itemize}
 
-They can be used to \alert{normalize/canonicalize} the input:
+\vfill
+They can be used to \alert{normalize/canonicalize} the input
 
 \begin{itemize}
 \item transform into a form analyzable for further passes
-\end{itemize}
+\item it is essential because keeps passes implementation manageable
 
-Input normalization is \alert{essential}:
-
-\begin{itemize}
-\item keep passes implementation manageable
 \end{itemize}
 \end{frame}
 
@@ -649,15 +653,17 @@ Each SSA variable is set only once:
 \item variable \alert{definition}
 \end{itemize}
 
+\vfill
 Each SSA variable can be used by multiple instructions:
 
 \begin{itemize}
 \item variable \alert{uses}
 \end{itemize}
 
+\vfill
 Algorithms and technical language abuse of these terms:
 
-\bigskip
+\vfill
 \emph{
 Let \llvminline{\%foo} be a variable. If \llvminline{\%foo} definition has not
 side-effects, and no uses, dead-code elimination can be efficiently performed
@@ -673,6 +679,7 @@ Old compilers are not SSA-based:
 \item cost must be amortized
 \end{itemize}
 
+\vfill
 New compilers are SSA-based:
 
 \begin{itemize}
@@ -680,6 +687,7 @@ New compilers are SSA-based:
 \item SSA-based analysis/optimizations faster
 \end{itemize}
 
+\vfill
 All modern compilers are SSA-based:
 
 \begin{itemize}
@@ -695,6 +703,7 @@ LLVM is a \alert{production-quality} compiler framework:
 \item[$\Rightarrow$] impossible knowing all details
 \end{itemize}
 
+\vfill
 But:
 
 \begin{itemize}
@@ -702,6 +711,7 @@ But:
 \item if you known compilers theory is ``easy'' finding what you need inside sources
 \end{itemize}
 
+\vfill
 Please take into account C++:
 \begin{itemize}
 \item basic skills required

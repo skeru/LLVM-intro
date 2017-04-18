@@ -455,13 +455,14 @@ For performance reasons there are different kind of passes:
 \begin{frame}{LLVM Passes}
 Each pass kind visits particular elements of a module:
 
-\begin{description}
+\begin{description}[align=left, labelwidth=1cm]
 \item[ImmutablePass] compiler configuration -- never run
 \item[CallGraphSCCPass] post-order visit of CallGraph SCCs
 \item[ModulePass] visit the whole module
 \item[FunctionPass] visit functions
 \item[LoopPass] post-order visit of loop nests
 \item[BasicBlockPass] visit basic blocks
+\item[RegionPass] visit a custom-defined region of code
 \end{description}
 
 \vfill

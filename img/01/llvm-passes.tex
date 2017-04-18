@@ -10,9 +10,9 @@
     draw,
     open triangle 90-
   },
-  level distance=10mm,
+  level distance=15mm,
   level 1/.style={
-    sibling distance=20mm
+    sibling distance=18mm
   },
   level 3/.style={
     sibling distance=20mm
@@ -28,6 +28,7 @@
     child { node {ImmutablePass}}
   }
   child { node {FunctionPass}}
-  child {node {LoopPass}}
-  child {node {BasicBlockPass}};
+  child { node {LoopPass}}
+  child { node {BasicBlockPass}}
+  child { node {RegionPass}};
 \end{tikzpicture}

@@ -18,7 +18,7 @@
 
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{19-04-2017}
+\date{08-05-2019}
 \title{Exploring LLVM}
 \newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
@@ -84,10 +84,10 @@
   \url{llvm.org/docs} mentions:
   \begin{itemize}
     \item \texttt{\ 5} references about \textit{Design \& Overview}
-    \item \texttt{19} references about \textit{User Guides}
-    \item \texttt{13} references about \textit{Programming Documentation}
-    \item \texttt{32} references about \textit{Subsystem Documentation}
-    \item \texttt{\ 7} references about \textit{Development Process Documentation}
+    \item \texttt{23} references about \textit{User Guides}
+    \item \texttt{15} references about \textit{Programming Documentation}
+    \item \texttt{42} references about \textit{Subsystem Documentation}
+    \item \texttt{\ 9} references about \textit{Development Process Documentation}
     \item \texttt{\ 5} Mailing Lists
     \item \texttt{\ 5} IRC bots
   \end{itemize}
@@ -114,7 +114,8 @@
           \textit{The best code documentation is the code itself.}
           Sometimes the generated doxygen documentation is enough.
           It also contains links to the web version of the source code.
-          It is always up-to-date.
+          It is updated to the latest development branch.
+          Please refer to github branches for the documentation about the stable versions.
     \vfill
     \item[llvm-dev] Mailing List. Last resource: ask other developers.
           Warning: 24/7 many people are posting in this ML.
@@ -176,7 +177,7 @@ One of the most difficult things in compiler is:
 In the SAXPY kernel some \llvminline{alloca} are generated:
 
 \begin{itemize}
-\item represent \alert{local variables}~\footnote{Arguments are local variables}
+\item represent \alert{local variables}~\footnote{Arguments are considered local variables}
 \end{itemize}
 
 \vfill

@@ -21,7 +21,7 @@
 
 \author{Stefano Cherubin}
 \institute{Politecnico di Milano}
-\date{12-04-2017}
+\date{03-05-2019}
 \title{Introduction to LLVM compiler framework}
 \newcommand{\customdata}{Stefano Cherubin <stefano.cherubin@polimi.it>}
 \renewcommand{\ttdefault}{pxtt}
@@ -117,10 +117,9 @@ Initially started as a research project at Urbana-Champaign:
 If you are there, then it is \alert{your key-technology}:
 
 \begin{itemize}
-\item open-source compilers: Open64~\cite{LOCAL:www/open64},
-      GCC~\cite{LOCAL:www/gcc}, LLVM~\cite{LOCAL:www/llvm}
-\item LLVM is relatively \alert{young} -- GCC performances are  better -- but \ldots
-\item \ldots it is highly modular, well written, kept \emph{clean} by developers.
+\item open-source compilers: GCC~\cite{LOCAL:www/gcc}, LLVM~\cite{LOCAL:www/llvm}
+\item LLVM is relatively \alert{young} -- GCC performances may be better -- \ldots
+\item \ldots LLVM is more modular, well written, kept \emph{clean} by developers.
 \end{itemize}
 \end{frame}
 
@@ -136,7 +135,7 @@ Typically a compiler is a \alert{pipeline}:
 \vfill
 There are three main components:
 \begin{description}
-\item[Front-end] \alert{translate} a source file in the \alert{intermediate representation}
+\item[Front-end] \alert{translate} a source file into the intermediate representation
 \item[Middle-end] \alert{analyze} intermediate representation, \alert{optimize}
                   it
 \item[Back-end] \alert{generate} target machine assembly from the intermediate
@@ -148,13 +147,12 @@ There are three main components:
 Each component is composed internally by pipelines:
 
 \begin{itemize}
-\item simple model of computations -- \alert{read} something, \alert{produce}
-      something
-\item only needed to specify \alert{how to transform} input data into output
-      data
+\item simple model -- read something, produce something
+\item specify only how to transform input data into output data
 \end{itemize}
-
+\vfill
 Complexity lies on \alert{chaining} together stages.
+\vfill
 \end{frame}
 
 \begin{frame}{Compiler pipeline}
@@ -244,7 +242,7 @@ We now consider a simple example: \emph{loop hoisting}.
 \begin{frame}{Loop Hoisting}
 It is a transformation that:
 \begin{itemize}
-\item looks for statements (inside the loop) not depending on the loop state
+\item looks for statements (inside a loop) not depending on the loop state
 \item move them outside the loop body
 \end{itemize}
 
@@ -278,7 +276,7 @@ This is the \alert{optimization pass}. It needs to know:
 \item which statements are ``good'' statements
 \end{itemize}
 
-They are \alert{analysis} passes:
+They are \alert{analysis}, which have to be implemented by other passes:
 
 \begin{itemize}
 \item detecting loops in the program
@@ -288,7 +286,7 @@ They are \alert{analysis} passes:
 When registering loop hoisting, also declare needed analysis:
 
 \begin{itemize}
-\item pipeline automatically built: analysis $\rightarrow$ optimization
+\item pipeline automatically built: \alert{analysis $\rightarrow$ optimization}
 \end{itemize}
 \end{frame}
 
@@ -356,7 +354,7 @@ You have to:
 \item proof its \alert{correctness}
 \item improve algorithm perfomance by acting on common case -- the only
       considered up to now. Please notice that corner cases are not considered
-      -- just do not optimize corner cases
+      -- just do not try to optimize the corner cases
 \item improve the effectiveness of the algorithm by adding
       \alert{normalization passes}
 \end{enumerate}
@@ -689,11 +687,11 @@ New compilers are SSA-based:
 \end{itemize}
 
 \vfill
-All modern compilers are SSA-based:
-
-\begin{itemize}
-\item exception are old version of the HotSpot Client compiler
-\end{itemize}
+%All modern compilers are SSA-based:
+%
+%\begin{itemize}
+%\item exception are old version of the HotSpot Client compiler
+%\end{itemize}
 \end{frame}
 
 \section{Conclusions}
@@ -708,8 +706,8 @@ LLVM is a \alert{production-quality} compiler framework:
 But:
 
 \begin{itemize}
-\item is well organized
-\item if you known compilers theory is ``easy'' finding what you need inside sources
+\item it is well organized
+\item given you known compilers theory, it is relatively easy to find what you need inside its sources
 \end{itemize}
 
 \vfill
